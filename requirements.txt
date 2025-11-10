@@ -1,0 +1,15 @@
+# Minimal requirements to run the ML pipeline and supporting scripts
+numpy
+torch
+scikit-learn
+joblib
+opensearch-py
+reportlab
+minio
+requests
+fastapi
+uvicorn
+neo4j
+python-dotenv
+# Optional: strawberry for GraphQL
+strawberry-graphql

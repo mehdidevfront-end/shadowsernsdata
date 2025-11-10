@@ -1,0 +1,64 @@
+[
+  {
+    "name": "Dropbox",
+    "domains": [
+      "dropbox.com"
+    ],
+    "tags": [
+      "file-sharing"
+    ],
+    "owner": "IT"
+  },
+  {
+    "name": "Zoom",
+    "domains": [
+      "zoom.us",
+      "zoom.com"
+    ],
+    "tags": [
+      "video"
+    ],
+    "owner": "Comms"
+  },
+  {
+    "name": "Slack",
+    "domains": [
+      "slack.com"
+    ],
+    "tags": [
+      "chat"
+    ],
+    "owner": "Comms"
+  },
+  {
+    "name": "Google Drive",
+    "domains": [
+      "drive.google.com",
+      "docs.google.com"
+    ],
+    "tags": [
+      "file-sharing"
+    ],
+    "owner": "IT"
+  },
+  {
+    "name": "OneDrive",
+    "domains": [
+      "onedrive.live.com"
+    ],
+    "tags": [
+      "file-sharing"
+    ],
+    "owner": "IT"
+  },
+  {
+    "name": "Salesforce",
+    "domains": [
+      "salesforce.com"
+    ],
+    "tags": [
+      "crm"
+    ],
+    "owner": "Sales"
+  }
+]

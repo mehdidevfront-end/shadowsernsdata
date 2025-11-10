@@ -1,0 +1,7 @@
+{
+  "id": "sample-1",
+  "type": "server_log",
+  "criticite": "low",
+  "timestamp": "2025-11-07T12:00:00Z",
+  "payload": { "msg": "exemple de log" }
+}
