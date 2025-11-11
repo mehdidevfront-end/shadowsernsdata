@@ -85,6 +85,46 @@ const Sidebar = () => {
       <nav className="mt-8">
         {menuItems.map((item) => {
           const isActive = router.pathname === item.href;
+          
+          // If item has submenu, render it differently
+          if (item.submenu) {
+            return (
+              <div key={item.name}>
+                <div className="flex items-center px-4 py-3 hover:bg-gray-700 transition-colors cursor-pointer">
+                  <item.icon className="h-6 w-6 mr-3" />
+                  <span className={collapsed ? 'hidden' : 'block'}>
+                    {item.name}
+                  </span>
+                </div>
+                {!collapsed && (
+                  <div className="pl-8">
+                    {item.submenu.map((subItem) => {
+                      const isSubItemActive = router.pathname === subItem.href;
+                      return (
+                        <Link
+                          key={subItem.href}
+                          href={subItem.href}
+                          className={`flex items-center px-4 py-2 text-sm ${
+                            isSubItemActive ? 'bg-gray-700' : 'hover:bg-gray-700'
+                          } transition-colors`}
+                          onClick={(e) => {
+                            if (isSubItemActive) {
+                              e.preventDefault();
+                            }
+                          }}
+                        >
+                          <subItem.icon className="h-5 w-5 mr-2" />
+                          <span>{subItem.name}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
+          
+          // Regular menu item with href
           return (
             <Link
               key={item.href}
@@ -92,6 +132,11 @@ const Sidebar = () => {
               className={`flex items-center px-4 py-3 ${
                 isActive ? 'bg-gray-700' : 'hover:bg-gray-700'
               } transition-colors`}
+              onClick={(e) => {
+                if (isActive) {
+                  e.preventDefault();
+                }
+              }}
             >
               <item.icon className="h-6 w-6 mr-3" />
               <span className={collapsed ? 'hidden' : 'block'}>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import DataTable from '../../components/common/DataTable';
+import DataTable from '../components/common/DataTable';
 
 const shadowITData = [
   {
