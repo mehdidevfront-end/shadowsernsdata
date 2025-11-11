@@ -15,6 +15,9 @@ services:
       - '8000:8000'
     environment:
       - PYTHONUNBUFFERED=1
+      - DATABASE_URL=${DATABASE_URL:-}
+    depends_on:
+      - backend-db
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -91,6 +94,17 @@ services:
     ports:
       - '5432:5432'
 
+  backend-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppassword
+      POSTGRES_DB: appdb
+    ports:
+      - '5433:5432'
+    volumes:
+      - backend_pgdata:/var/lib/postgresql/data
+
   airflow:
     build: ./airflow
     depends_on:
@@ -127,3 +141,4 @@ services:
 # Volumes can be added for persistence
 volumes:
   esdata: {}
+  backend_pgdata: {}

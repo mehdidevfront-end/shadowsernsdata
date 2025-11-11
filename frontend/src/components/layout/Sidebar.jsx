@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
   HomeIcon,
-  MapIcon, 
+  MapIcon,
   ShieldCheckIcon,
   UsersIcon,
   DocumentDuplicateIcon,
@@ -18,34 +18,80 @@ import {
   EnvelopeIcon,
   CalendarIcon,
   CloudIcon,
-  ArrowLeftOnRectangleIcon
+  ServerIcon,
+  WifiIcon,
 } from '@heroicons/react/24/outline';
 
 const menuItems = [
-  { 
+  {
     name: "Vue d'ensemble",
     href: '/dashboard',
-    icon: HomeIcon 
+    icon: HomeIcon,
   },
-  { 
+  {
     name: 'Cartographie IT',
     href: '/cartography',
-    icon: MapIcon 
+    icon: MapIcon,
   },
-  { 
+  {
     name: 'Détection Shadow IT',
     href: '/shadow-it',
-    icon: EyeIcon 
+    icon: EyeIcon,
   },
-  { 
+  {
     name: 'Conformité & Gouvernance',
     href: '/compliance',
-    icon: ShieldCheckIcon 
+    icon: ShieldCheckIcon,
   },
-  { 
+  {
     name: 'Utilisateurs',
     href: '/users',
-    icon: UsersIcon 
+    icon: UsersIcon,
+  },
+  {
+    name: 'Actifs',
+    href: '/assets',
+    icon: DocumentTextIcon,
+  },
+  {
+    name: 'Services',
+    href: '/services',
+    icon: CloudIcon,
+  },
+  {
+    name: 'Alertes',
+    href: '/alerts',
+    icon: BellIcon,
+  },
+  {
+    name: 'Logs Serveur',
+    href: '/server-logs',
+    icon: ServerIcon,
+  },
+  {
+    name: 'Logs WiFi',
+    href: '/wifi-logs',
+    icon: WifiIcon,
+  },
+  {
+    name: 'Événements Ingest',
+    href: '/ingest-events',
+    icon: DocumentDuplicateIcon,
+  },
+  {
+    name: 'Risques',
+    href: '/risks',
+    icon: ShieldCheckIcon,
+  },
+  {
+    name: 'Statistiques',
+    href: '/stats',
+    icon: PresentationChartBarIcon,
+  },
+  {
+    name: 'API Explorer',
+    href: '/api-explorer',
+    icon: Cog8ToothIcon,
   },
   {
     name: 'Google Workspace',
@@ -59,22 +105,23 @@ const menuItems = [
       { name: 'Google Slides', href: '/google/slides', icon: PresentationChartBarIcon },
       { name: 'Emails', href: '/google/emails', icon: EnvelopeIcon },
       { name: 'Events', href: '/google/events', icon: CalendarIcon },
-    ]
-  }];
+    ],
+  },
+];
 
 const Sidebar = () => {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className={`bg-gray-800 text-white transition-all duration-300 ${
-      collapsed ? 'w-20' : 'w-64'
-    } min-h-screen fixed left-0 top-0 z-30`}>
+    <aside
+      className={`bg-gray-800 text-white transition-all duration-300 ${
+        collapsed ? 'w-20' : 'w-64'
+      } min-h-screen fixed left-0 top-0 z-30`}
+    >
       <div className="p-4 flex items-center justify-between">
-        <h1 className={`font-bold text-xl ${collapsed ? 'hidden' : 'block'}`}>
-          ShadowGuard
-        </h1>
-        <button 
+        <h1 className={`font-bold text-xl ${collapsed ? 'hidden' : 'block'}`}>ShadowGuard</h1>
+        <button
           onClick={() => setCollapsed(!collapsed)}
           className="p-1 rounded-lg hover:bg-gray-700"
         >
@@ -85,16 +132,14 @@ const Sidebar = () => {
       <nav className="mt-8">
         {menuItems.map((item) => {
           const isActive = router.pathname === item.href;
-          
+
           // If item has submenu, render it differently
           if (item.submenu) {
             return (
               <div key={item.name}>
                 <div className="flex items-center px-4 py-3 hover:bg-gray-700 transition-colors cursor-pointer">
                   <item.icon className="h-6 w-6 mr-3" />
-                  <span className={collapsed ? 'hidden' : 'block'}>
-                    {item.name}
-                  </span>
+                  <span className={collapsed ? 'hidden' : 'block'}>{item.name}</span>
                 </div>
                 {!collapsed && (
                   <div className="pl-8">
@@ -123,7 +168,7 @@ const Sidebar = () => {
               </div>
             );
           }
-          
+
           // Regular menu item with href
           return (
             <Link
@@ -139,9 +184,7 @@ const Sidebar = () => {
               }}
             >
               <item.icon className="h-6 w-6 mr-3" />
-              <span className={collapsed ? 'hidden' : 'block'}>
-                {item.name}
-              </span>
+              <span className={collapsed ? 'hidden' : 'block'}>{item.name}</span>
             </Link>
           );
         })}
@@ -150,9 +193,7 @@ const Sidebar = () => {
       <div className="absolute bottom-0 left-0 right-0 p-4">
         <div className="flex items-center space-x-2">
           <BellIcon className="h-6 w-6" />
-          <span className={collapsed ? 'hidden' : 'block'}>
-            Notifications
-          </span>
+          <span className={collapsed ? 'hidden' : 'block'}>Notifications</span>
         </div>
       </div>
     </aside>

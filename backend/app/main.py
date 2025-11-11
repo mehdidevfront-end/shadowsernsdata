@@ -10,6 +10,14 @@ from .storage import list_assets, list_risks
 from .routers import qa as qa_router
 from .routers import auth as auth_router
 from .routers import stats as stats_router
+from .routers import google_logs as google_logs_router
+from .routers import server_logs as server_logs_router
+from .routers import ingest as ingest_router
+from .routers import admin_assets as admin_assets_router
+from .routers import admin_services as admin_services_router
+from .routers import reports as reports_router
+from .db import Base, engine, SessionLocal
+from sqlalchemy.exc import SQLAlchemyError
 from .graphql_schema import schema
 try:
     from strawberry.fastapi import GraphQLRouter
@@ -40,6 +48,12 @@ app.add_middleware(
 app.include_router(assets_router.router)
 app.include_router(risks_router.router)
 app.include_router(qa_router.router)
+app.include_router(google_logs_router.router)
+app.include_router(server_logs_router.router)
+app.include_router(ingest_router.router)
+app.include_router(admin_assets_router.router)
+app.include_router(admin_services_router.router)
+app.include_router(reports_router.router)
 
 
 @app.get('/compliance')
@@ -118,7 +132,7 @@ async def graph_asset(
     Return incoming and outgoing DEPENDS_ON relations for an asset.
     Optional query params: type, criticite, bu, env to filter neighbour nodes.
     """
-    results = {"asset": asset, "incoming": [], "outgoing": []}
+    results = {"asset": asset, "incoming": [], "outgoing": [], "nodes": [], "edges": []}
 
     # Build filter clauses for outgoing (b) and incoming (c) nodes
     out_conds = []
@@ -161,13 +175,15 @@ async def graph_asset(
                     except Exception:
                         # fallback if rec['rel'] is already a mapping-like
                         rel_obj = rec['rel']
-                results['outgoing'].append({
+                out_node = {
                     'id': rec['id'],
                     'labels': rec['labels'],
                     'type': rec.get('type'),
                     'criticite': rec.get('criticite'),
                     'rel': rel_obj,
-                })
+                }
+                results['outgoing'].append(out_node)
+                results['nodes'].append({'id': rec['id']})
             for rec in sess.run(q_in, **params):
                 rel_obj = {}
                 if rec['rel'] is not None:
@@ -175,13 +191,15 @@ async def graph_asset(
                         rel_obj = dict(rec['rel'])
                     except Exception:
                         rel_obj = rec['rel']
-                results['incoming'].append({
+                in_node = {
                     'id': rec['id'],
                     'labels': rec['labels'],
                     'type': rec.get('type'),
                     'criticite': rec.get('criticite'),
                     'rel': rel_obj,
-                })
+                }
+                results['incoming'].append(in_node)
+                results['nodes'].append({'id': rec['id']})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return results
@@ -196,3 +214,37 @@ async def list_assets():
 async def predict_dummy(data: dict):
     # Placeholder for model inference
     return {"anomaly_score": 0.0}
+
+
+@app.on_event("startup")
+def on_startup():
+    try:
+        Base.metadata.create_all(bind=engine)
+    except SQLAlchemyError:
+        pass
+    # Seed a few known services if table is empty
+    try:
+        db = SessionLocal()
+        from .models import Service, Device
+        if db.query(Service).count() == 0:
+            seeds = [
+                ("Google Drive", "drive.google.com", 70),
+                ("Dropbox", "dropbox.com", 60),
+                ("Slack", "slack.com", 50),
+            ]
+            for name, domain, score in seeds:
+                db.add(Service(name=name, domain=domain, risk_score=score, approved=False))
+            db.commit()
+        if db.query(Device).count() == 0:
+            devices = [
+                ("laptop-alice", "10.0.0.12", "AA:BB:CC:DD:EE:01"),
+                ("laptop-bob", "10.0.0.13", "AA:BB:CC:DD:EE:02"),
+                ("srv-logs", "10.0.0.20", None),
+            ]
+            for host, ip, mac in devices:
+                db.add(Device(hostname=host, ip_address=ip, mac_address=mac))
+            db.commit()
+        db.close()
+    except Exception:
+        # Ignore seeding errors in dev
+        pass

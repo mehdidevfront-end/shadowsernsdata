@@ -1,17 +1,13 @@
-import { useState } from 'react';
+import React from 'react';
 import Layout from '../../components/layout/Layout';
+import GoogleLogsViewer from '../../components/GoogleLogsViewer';
 
-export default function GoogleDocs() {
+const DocsPage = () => {
   return (
     <Layout>
-      <div className="p-6">
-        <h1 className="text-3xl font-bold mb-6">Google Docs</h1>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-gray-600">
-            Surveillance des activités Google Docs
-          </p>
-        </div>
-      </div>
+      <GoogleLogsViewer service="docs" />
     </Layout>
   );
-}
+};
+
+export default DocsPage;

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from .auth import get_current_user
+from typing import Optional
 
 router = APIRouter(
     prefix="/stats",
@@ -7,7 +8,7 @@ router = APIRouter(
 )
 
 @router.get("/")
-async def get_stats(current_user = Depends(get_current_user)):
+async def get_stats():
     """
     Get overview statistics for the dashboard
     """
